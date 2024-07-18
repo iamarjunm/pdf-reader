@@ -4,10 +4,12 @@ from PyPDF2 import PdfReader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import FAISS
-from langchain.llms import HuggingFaceHub
+from langchain.llms import OpenAI
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationalRetrievalChain
 from htmlTemplates import css, bot_template, user_template
+import openai
+import os
 
 # Define a custom exception if needed
 class CustomToolException(Exception):
@@ -42,8 +44,8 @@ def get_vectorstore(text_chunks):
     return vectorstore
 
 def get_conversation_chain(vectorstore):
-    # Use a Hugging Face model for conversational tasks
-    llm = HuggingFaceHub(repo_id="facebook/blenderbot-400M-distill", model_kwargs={"temperature": 0.7})
+    # Use OpenAI's GPT model for conversational tasks
+    llm = OpenAI(model="gpt-4", api_key=os.getenv("OPENAI_API_KEY"))
 
     memory = ConversationBufferMemory(
         memory_key='chat_history', return_messages=True)
